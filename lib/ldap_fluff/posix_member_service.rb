@@ -4,6 +4,7 @@ require 'net/ldap'
 class LdapFluff::Posix::MemberService < LdapFluff::GenericMemberService
   def initialize(ldap, config)
     @attr_login = (config.attr_login || 'memberuid')
+    @use_rfc4519_group_membership = config.use_rfc4519_group_membership
     super
   end
 
@@ -59,8 +60,10 @@ class LdapFluff::Posix::MemberService < LdapFluff::GenericMemberService
   private
 
   def user_group_filter(uid, user_dn)
+    filter = Net::LDAP::Filter.eq('memberuid', uid)
+    return filter unless @use_rfc4519_group_membership
     unique_filter = Net::LDAP::Filter.eq('uniquemember', user_dn) &
                     Net::LDAP::Filter.eq('objectClass', 'groupOfUniqueNames')
-    Net::LDAP::Filter.eq('memberuid', uid) | unique_filter
+    filter | unique_filter
   end
 end

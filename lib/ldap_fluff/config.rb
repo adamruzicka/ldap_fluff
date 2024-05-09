@@ -14,7 +14,8 @@ class LdapFluff::Config
                      'server_type' => :free_ipa,
                      'anon_queries' => false,
                      'instrumentation_service' => nil,
-                     'use_netgroups' => false }.freeze
+                     'use_netgroups' => false,
+                     'use_rfc4519_group_membership' => false }.freeze
 
   def initialize(config)
     raise ArgumentError unless config.respond_to?(:to_hash)
